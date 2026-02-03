@@ -1,6 +1,6 @@
 import {
     Target, Telescope, Lightbulb, Handshake,
-    Rocket, ShieldCheck, Mail, Wrench, MapPin
+    Rocket, ShieldCheck, Mail, Wrench, MapPin, Phone
 } from "lucide-react";
 import Link from "next/link";
 
@@ -91,14 +91,21 @@ export default function About() {
                                 <span className="contact-icon"><Mail className="w-5 h-5" /></span>
                                 <div>
                                     <span className="contact-label">商务合作</span>
-                                    <a href="mailto:bd@gradelight.ai">bd@gradelight.ai</a>
+                                    <a href="mailto:bd@gradelightai.com">bd@gradelightai.com</a>
                                 </div>
                             </div>
                             <div className="contact-item">
                                 <span className="contact-icon"><Wrench className="w-5 h-5" /></span>
                                 <div>
                                     <span className="contact-label">技术支持</span>
-                                    <a href="mailto:support@gradelight.ai">support@gradelight.ai</a>
+                                    <a href="mailto:support@gradelightai.com">support@gradelightai.com</a>
+                                </div>
+                            </div>
+                            <div className="contact-item">
+                                <span className="contact-icon"><Phone className="w-5 h-5" /></span>
+                                <div>
+                                    <span className="contact-label">联系电话</span>
+                                    <a href="tel:18841164237">188-4116-4237</a>
                                 </div>
                             </div>
                             <div className="contact-item">

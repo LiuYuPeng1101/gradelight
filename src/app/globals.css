@@ -1240,7 +1240,7 @@ body {
 
 .contact-item {
   display: flex;
-  items: flex-start;
+  align-items: flex-start;
   gap: 16px;
 }
 
@@ -1361,10 +1361,20 @@ body {
   text-decoration: none;
 }
 
-/* Responsive */
+/* ========== Responsive Design ========== */
+
+/* Tablet - 1024px and below */
 @media (max-width: 1024px) {
   .navbar {
     padding: 0 24px;
+  }
+
+  .nav-links {
+    display: none;
+  }
+
+  .hero-section {
+    padding: 100px 40px 60px;
   }
 
   .hero-content {
@@ -1376,16 +1386,118 @@ body {
     max-width: 100%;
   }
 
+  .hero-title {
+    font-size: 42px;
+  }
+
+  .hero-ctas {
+    justify-content: center;
+  }
+
+  .hero-stats {
+    justify-content: center;
+  }
+
   .hero-right {
     width: 100%;
     height: 400px;
   }
 
-  .solutions-grid,
-  .case-grid,
-  .testimonial-grid,
-  .values-grid {
+  .feature-switcher-container {
+    flex-direction: column;
+    margin: 40px 20px 60px;
+  }
+
+  .switcher-sidebar {
+    width: 100%;
+    flex-direction: row;
+    overflow-x: auto;
+    padding: 20px;
+    gap: 12px;
+  }
+
+  .switcher-header {
+    display: none;
+  }
+
+  .switcher-tab {
+    min-width: 150px;
+    padding: 16px;
+  }
+
+  .tab-subtitle {
+    display: none;
+  }
+
+  .switcher-content {
+    padding: 40px;
+  }
+
+  .panel-title {
+    font-size: 28px;
+  }
+
+  .panel-grid {
     grid-template-columns: 1fr;
+  }
+
+  .solutions-section {
+    padding: 60px 40px;
+  }
+
+  .solutions-title {
+    font-size: 32px;
+  }
+
+  .solutions-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .customers-section {
+    padding: 60px 40px;
+  }
+
+  .customers-title {
+    font-size: 32px;
+  }
+
+  .case-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .testimonial-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .about-section {
+    padding: 60px 40px;
+  }
+
+  .about-intro {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+
+  .about-title {
+    font-size: 32px;
+  }
+
+  .about-highlights {
+    flex-wrap: wrap;
+    gap: 24px;
+  }
+
+  .values-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .contact-section {
+    grid-template-columns: 1fr;
+    padding: 32px;
+  }
+
+  .site-footer {
+    padding: 40px;
   }
 
   .footer-main {
@@ -1394,7 +1506,363 @@ body {
   }
 
   .footer-links {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 40px;
+  }
+
+  .footer-bottom {
     flex-direction: column;
-    gap: 30px;
+    gap: 16px;
+    text-align: center;
+  }
+
+  .mega-menu {
+    display: none !important;
+  }
+}
+
+/* Small Tablet / Large Phone - 768px and below */
+@media (max-width: 768px) {
+  .hero-section {
+    padding: 90px 24px 50px;
+    min-height: auto;
+  }
+
+  .hero-title {
+    font-size: 32px;
+  }
+
+  .hero-subtitle {
+    font-size: 16px;
+  }
+
+  .hero-ctas {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .hero-stats {
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .hero-right {
+    height: 300px;
+  }
+
+  .switcher-content {
+    padding: 24px;
+  }
+
+  .panel-title {
+    font-size: 24px;
+  }
+
+  .panel-visual {
+    height: 250px;
+  }
+
+  .solutions-section,
+  .customers-section,
+  .about-section {
+    padding: 50px 20px;
+  }
+
+  .solutions-title,
+  .customers-title,
+  .about-title {
+    font-size: 28px;
+  }
+
+  .solutions-subtitle,
+  .customers-subtitle {
+    font-size: 16px;
+  }
+
+  .solution-card,
+  .case-card {
+    padding: 24px;
+  }
+
+  .testimonial-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .values-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .contact-section {
+    padding: 24px;
+  }
+
+  .contact-cta {
+    padding: 32px 24px;
+  }
+
+  .contact-cta h4 {
+    font-size: 20px;
+  }
+
+  .site-footer {
+    padding: 32px 20px 24px;
+  }
+
+  .footer-links {
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .footer-legal {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .section-subtitle {
+    font-size: 20px;
+  }
+
+  .case-metrics {
+    flex-wrap: wrap;
+  }
+
+  .case-metrics .metric {
+    min-width: 80px;
+  }
+}
+
+/* Mobile Phone - 480px and below */
+@media (max-width: 480px) {
+  .navbar {
+    padding: 0 16px;
+    height: 60px;
+  }
+
+  .logo-text {
+    font-size: 18px;
+  }
+
+  .logo-img {
+    width: 32px;
+    height: 32px;
+  }
+
+  .cta-button {
+    padding: 8px 16px;
+    font-size: 13px;
+  }
+
+  .hero-section {
+    padding: 80px 16px 40px;
+  }
+
+  .hero-title {
+    font-size: 28px;
+  }
+
+  .hero-subtitle {
+    font-size: 15px;
+    margin-bottom: 28px;
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    padding: 14px 24px;
+    font-size: 15px;
+  }
+
+  .stat-number {
+    font-size: 26px;
+  }
+
+  .stat-label {
+    font-size: 12px;
+  }
+
+  .switcher-sidebar {
+    padding: 12px;
+  }
+
+  .switcher-tab {
+    min-width: 120px;
+    padding: 12px;
+  }
+
+  .tab-icon {
+    width: 32px;
+    height: 32px;
+    font-size: 16px;
+  }
+
+  .tab-title {
+    font-size: 14px;
+  }
+
+  .switcher-content {
+    padding: 20px 16px;
+  }
+
+  .panel-tag {
+    font-size: 12px;
+    padding: 4px 10px;
+  }
+
+  .panel-title {
+    font-size: 22px;
+  }
+
+  .panel-desc {
+    font-size: 14px;
+  }
+
+  .panel-visual {
+    height: 200px;
+    padding: 12px;
+  }
+
+  .solutions-section,
+  .customers-section,
+  .about-section {
+    padding: 40px 16px;
+  }
+
+  .solutions-badge,
+  .customers-badge,
+  .about-badge {
+    font-size: 12px;
+    padding: 6px 12px;
+  }
+
+  .solutions-title,
+  .customers-title,
+  .about-title {
+    font-size: 24px;
+  }
+
+  .solutions-subtitle,
+  .customers-subtitle {
+    font-size: 14px;
+  }
+
+  .solution-card,
+  .case-card,
+  .value-card,
+  .testimonial-card {
+    padding: 20px;
+  }
+
+  .solution-name,
+  .case-company {
+    font-size: 18px;
+  }
+
+  .solution-desc,
+  .case-desc {
+    font-size: 13px;
+  }
+
+  .case-logo {
+    width: 48px;
+    height: 48px;
+  }
+
+  .case-metrics .metric-value {
+    font-size: 18px;
+  }
+
+  .case-metrics .metric-label {
+    font-size: 10px;
+  }
+
+  .section-subtitle {
+    font-size: 18px;
+  }
+
+  .about-highlights {
+    gap: 16px;
+  }
+
+  .highlight-number {
+    font-size: 26px;
+  }
+
+  .highlight-label {
+    font-size: 12px;
+  }
+
+  .visual-card {
+    padding: 24px;
+  }
+
+  .visual-card h4 {
+    font-size: 18px;
+  }
+
+  .values-title {
+    font-size: 22px;
+  }
+
+  .value-card h4 {
+    font-size: 16px;
+  }
+
+  .contact-section {
+    padding: 20px;
+  }
+
+  .contact-info h3 {
+    font-size: 22px;
+  }
+
+  .contact-desc {
+    font-size: 14px;
+  }
+
+  .contact-cta {
+    padding: 28px 20px;
+  }
+
+  .contact-cta h4 {
+    font-size: 18px;
+  }
+
+  .btn-primary-large {
+    padding: 14px 28px;
+    font-size: 14px;
+  }
+
+  .site-footer {
+    padding: 28px 16px 20px;
+  }
+
+  .footer-logo span {
+    font-size: 18px;
+  }
+
+  .footer-tagline {
+    font-size: 13px;
+  }
+
+  .footer-column h5 {
+    font-size: 13px;
+  }
+
+  .footer-column a {
+    font-size: 13px;
+  }
+
+  .footer-bottom p {
+    font-size: 12px;
+  }
+
+  .footer-legal a {
+    font-size: 12px;
   }
 }

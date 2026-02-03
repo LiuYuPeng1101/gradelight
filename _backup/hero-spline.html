@@ -1,0 +1,2665 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GradeLight - AI 应用开发</title>
+    <!-- Plus Jakarta Sans - Professional SaaS Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --primary: #6366F1;
+            --primary-dark: #4F46E5;
+            --secondary: #818CF8;
+            --cta: #10B981;
+            --cta-hover: #059669;
+            --bg-light: #F5F3FF;
+            --bg-white: #FFFFFF;
+            --text-dark: #1E1B4B;
+            --text-muted: #64748B;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-white);
+            color: var(--text-dark);
+        }
+
+        /* Lucide 图标尺寸工具类 */
+        .w-5 {
+            width: 20px;
+        }
+
+        .h-5 {
+            height: 20px;
+        }
+
+        .w-6 {
+            width: 24px;
+        }
+
+        .h-6 {
+            height: 24px;
+        }
+
+        .w-8 {
+            width: 32px;
+        }
+
+        .h-8 {
+            height: 32px;
+        }
+
+        .w-4 {
+            width: 16px;
+        }
+
+        .h-4 {
+            height: 16px;
+        }
+
+        /* 星星评分样式 */
+        .fill-amber-400 {
+            fill: #FBBF24;
+        }
+
+        .text-amber-400 {
+            color: #FBBF24;
+        }
+
+        /* 区域分隔装饰 */
+        .section-divider {
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
+            border-radius: 2px;
+            margin: 0 auto 40px;
+        }
+
+        [data-lucide] {
+            display: inline-block;
+            vertical-align: middle;
+            stroke: currentColor;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            fill: none;
+        }
+
+        /* 导航栏 - 默认透明，滚动后变白 */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 80px;
+            height: 72px;
+            background: transparent;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            transition: background 0.3s ease, box-shadow 0.3s ease, backdrop-filter 0.3s ease;
+        }
+
+        /* 滚动后导航栏样式 */
+        .navbar.scrolled {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: 0 1px 0 rgba(0, 0, 0, 0.08);
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-img {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+        }
+
+        .logo-text {
+            font-size: 22px;
+            font-weight: 600;
+            color: #1A1A1A;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 40px;
+        }
+
+        .nav-links a {
+            font-size: 15px;
+            color: #1A1A1A;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .cta-button {
+            background: var(--primary);
+            color: #FFFFFF;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .cta-button:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 102, 255, 0.3);
+        }
+
+        /* Mega Menu Styles */
+        .nav-item {
+            position: relative;
+            padding: 20px 0;
+            /* Increase hit area */
+        }
+
+        .mega-menu {
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            width: 900px;
+            background: #FFFFFF;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            padding: 32px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+            z-index: 1001;
+            /* Triangle arrow */
+        }
+
+        .mega-menu::before {
+            content: '';
+            position: absolute;
+            top: -8px;
+            left: 50%;
+            transform: translateX(-50%) rotate(45deg);
+            width: 16px;
+            height: 16px;
+            background: #FFFFFF;
+        }
+
+        .nav-item:hover .mega-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .mega-menu-header {
+            margin-bottom: 24px;
+            border-bottom: 1px solid #F0F0F0;
+            padding-bottom: 16px;
+        }
+
+        .mega-menu-title {
+            font-size: 14px;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+
+        .mega-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .product-card {
+            display: block;
+            text-decoration: none;
+            padding: 16px;
+            border-radius: 12px;
+            transition: all 0.2s ease;
+            background: #FAFAFA;
+            border: 1px solid transparent;
+        }
+
+        .product-card:hover {
+            background: #F0F7FF;
+            border-color: rgba(0, 102, 255, 0.1);
+        }
+
+        .product-icon {
+            width: 40px;
+            height: 40px;
+            background: #FFFFFF;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            font-size: 20px;
+        }
+
+        .product-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .product-tag {
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            background: #E6F0FF;
+            color: var(--primary);
+            font-weight: 500;
+        }
+
+        .product-desc {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.5;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 72px 80px 80px;
+            /* 基础渐变背景 */
+            background: linear-gradient(135deg, #FFFFFF 0%, #F5F7FA 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* 1. 科技感网格背景 - 极细微的虚线网格 */
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image:
+                linear-gradient(rgba(0, 102, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 102, 255, 0.03) 1px, transparent 1px);
+            background-size: 80px 80px;
+            /* 居中掩模，让网格只在中间和周围隐约可见，避免太乱 */
+            mask-image: radial-gradient(circle at center, black 40%, transparent 100%);
+            -webkit-mask-image: radial-gradient(circle at center, black 40%, transparent 100%);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* 2. 流动线条装饰 - 增加动感 */
+        .flow-line {
+            position: absolute;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.4;
+        }
+
+        .hero-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+            gap: 60px;
+        }
+
+        .hero-left {
+            flex: 1;
+            max-width: 600px;
+            z-index: 10;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #E8F4FF 0%, #F0E8FF 100%);
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-size: 14px;
+            color: var(--primary);
+            font-weight: 500;
+            margin-bottom: 24px;
+            animation: fadeInUp 0.6s ease;
+        }
+
+        .hero-badge::before {
+            content: "<i data-lucide=" rocket" class=" w-5 h-5"></i>";
+        }
+
+        .hero-title {
+            font-size: 56px;
+            font-weight: 800;
+            line-height: 1.1;
+            color: #1A1A1A;
+            margin-bottom: 24px;
+        }
+
+        .hero-title .highlight {
+            background: linear-gradient(135deg, var(--primary) 0%, #6366F1 50%, #8B5CF6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* 打字机动画容器 */
+        .typewriter-container {
+            display: inline;
+        }
+
+        .typewriter-text {
+            display: inline;
+            border-right: 3px solid var(--primary);
+            animation: blink 0.7s step-end infinite;
+        }
+
+        .typewriter-text.done {
+            border-right: none;
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                border-color: var(--primary);
+            }
+
+            50% {
+                border-color: transparent;
+            }
+        }
+
+        .hero-subtitle {
+            font-size: 18px;
+            line-height: 1.7;
+            color: #666666;
+            margin-bottom: 40px;
+            animation: fadeInUp 0.6s ease 0.2s both;
+        }
+
+        .hero-ctas {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 48px;
+            animation: fadeInUp 0.6s ease 0.3s both;
+        }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: #FFFFFF;
+            padding: 16px 32px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.3);
+            cursor: pointer;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #FFFFFF;
+            color: #1A1A1A;
+            padding: 16px 32px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            text-decoration: none;
+            border: 2px solid #E5E7EB;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            transform: translateY(-3px);
+        }
+
+        .hero-stats {
+            display: flex;
+            gap: 48px;
+            animation: fadeInUp 0.6s ease 0.4s both;
+        }
+
+        .stat-item {
+            text-align: left;
+        }
+
+        .stat-number {
+            font-size: 32px;
+            font-weight: 700;
+            color: #1A1A1A;
+            margin-bottom: 4px;
+        }
+
+        .stat-number .plus {
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #999999;
+        }
+
+        /* 右侧3D区域 */
+        .hero-right {
+            flex: 1;
+            height: 800px;
+            position: relative;
+            margin-top: 0;
+        }
+
+        .spline-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        spline-viewer {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* 装饰元素 */
+        .hero-decoration {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.5;
+            z-index: 0;
+        }
+
+        .decoration-1 {
+            width: 400px;
+            height: 400px;
+            background: linear-gradient(135deg, var(--primary) 0%, #6366F1 100%);
+            top: -100px;
+            right: 10%;
+        }
+
+        .decoration-2 {
+            width: 300px;
+            height: 300px;
+            background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%);
+            bottom: -50px;
+            left: 20%;
+        }
+
+        /* 动画 */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 响应式 */
+        @media (max-width: 1024px) {
+            .hero-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .hero-left {
+                max-width: 100%;
+            }
+
+            .hero-ctas,
+            .hero-stats {
+                justify-content: center;
+            }
+
+            .hero-right {
+                width: 100%;
+                height: 400px;
+            }
+        }
+
+        /* Feature Grid Section */
+        .features-section {
+            padding: 100px 80px;
+            background: #FFFFFF;
+            position: relative;
+            z-index: 1;
+        }
+
+        .features-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .features-header h2 {
+            font-size: 42px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #1A1A1A 0%, #434343 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .features-header p {
+            font-size: 18px;
+            color: #666;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        /* Bento Grid 布局 */
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(2, 300px);
+            gap: 24px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .bento-item {
+            background: #F8FAFF;
+            border-radius: 24px;
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            cursor: pointer;
+            border: 1px solid rgba(0, 0, 0, 0.03);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .bento-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 50, 150, 0.08);
+            border-color: rgba(0, 102, 255, 0.1);
+        }
+
+        .bento-item.large {
+            grid-column: span 2;
+        }
+
+        .bento-item.tall {
+            grid-row: span 2;
+        }
+
+        /* 卡片内容样式 */
+        .bento-content {
+            z-index: 2;
+        }
+
+        .bento-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #1A1A1A;
+            margin-bottom: 12px;
+        }
+
+        .bento-desc {
+            font-size: 15px;
+            color: #666;
+            line-height: 1.5;
+        }
+
+        .bento-icon-bg {
+            width: 48px;
+            height: 48px;
+            background: #FFFFFF;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        /* 装饰背景图片容器 */
+        .bento-img {
+            position: absolute;
+            right: -20px;
+            bottom: -20px;
+            width: 200px;
+            height: 200px;
+            object-fit: contain;
+            opacity: 0.9;
+            transition: all 0.5s ease;
+        }
+
+        .bento-item:hover .bento-img {
+            transform: scale(1.05) translate(-10px, -10px);
+        }
+
+        /* 响应式调整 */
+        @media (max-width: 1024px) {
+            .bento-grid {
+                grid-template-columns: repeat(2, 1fr);
+                grid-template-rows: auto;
+            }
+
+            .bento-item.large {
+                grid-column: span 2;
+            }
+
+            .bento-item.tall {
+                grid-row: span 1;
+                min-height: 300px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .bento-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .bento-item.large {
+                grid-column: span 1;
+            }
+        }
+
+        /* Product Feature Switcher (App-like Interaction) */
+        .feature-switcher-container {
+            max-width: 1200px;
+            margin: 40px auto 100px;
+            /* Proper spacing from hero section */
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            display: flex;
+            overflow: hidden;
+            min-height: 600px;
+            z-index: 10;
+            position: relative;
+        }
+
+        /* Left Sidebar: Tabs */
+        .switcher-sidebar {
+            width: 320px;
+            background: #F9FAFB;
+            border-right: 1px solid rgba(0, 0, 0, 0.05);
+            padding: 40px 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .switcher-header {
+            margin-bottom: 24px;
+            padding-left: 12px;
+        }
+
+        .switcher-header h3 {
+            font-size: 18px;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        .switcher-tab {
+            padding: 20px 24px;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            position: relative;
+            background: transparent;
+        }
+
+        .switcher-tab:hover {
+            background: rgba(0, 0, 0, 0.02);
+        }
+
+        .switcher-tab.active {
+            background: #FFFFFF;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+        }
+
+        .switcher-tab.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            height: 24px;
+            width: 4px;
+            background: var(--primary);
+            border-radius: 0 4px 4px 0;
+        }
+
+        .tab-icon {
+            width: 40px;
+            height: 40px;
+            background: #FFF;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .switcher-tab.active .tab-icon {
+            background: var(--primary);
+            color: #FFF;
+        }
+
+        .tab-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .tab-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .switcher-tab.active .tab-title {
+            color: var(--primary);
+        }
+
+        .tab-subtitle {
+            font-size: 12px;
+            color: #999;
+        }
+
+        /* Right Content Area */
+        .switcher-content {
+            flex: 1;
+            padding: 60px 80px;
+            position: relative;
+            background: #FFFFFF;
+        }
+
+        .content-panel {
+            display: none;
+            /* Hidden by default */
+            animation: fadeIn 0.5s ease;
+            height: 100%;
+        }
+
+        .content-panel.active {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .panel-tag {
+            display: inline-block;
+            padding: 6px 12px;
+            background: #E6F0FF;
+            color: var(--primary);
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 24px;
+            align-self: flex-start;
+        }
+
+        .panel-title {
+            font-size: 36px;
+            font-weight: 700;
+            color: #1A1A1A;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+
+        .panel-desc {
+            font-size: 16px;
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 40px;
+            max-width: 600px;
+        }
+
+        .panel-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .panel-feature {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .panel-feature i {
+            color: var(--primary);
+        }
+
+        .panel-visual {
+            width: 100%;
+            height: 350px;
+            border-radius: 20px;
+            overflow: hidden;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
+            margin-top: auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .panel-visual img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        /* ========== 解决方案 Section ========== */
+        .solutions-section {
+            padding: 60px 80px 100px;
+            background: linear-gradient(180deg, #FFFFFF 0%, #F8FAFF 100%);
+            position: relative;
+        }
+
+        .solutions-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .solutions-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .solutions-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            background: linear-gradient(135deg, #E8F4FF 0%, #F0E8FF 100%);
+            color: var(--primary);
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .solutions-title {
+            font-size: 42px;
+            font-weight: 700;
+            color: #1A1A1A;
+            margin-bottom: 16px;
+        }
+
+        .solutions-subtitle {
+            font-size: 18px;
+            color: #666;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .solutions-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+
+        .solution-card {
+            background: #FFFFFF;
+            border-radius: 24px;
+            padding: 36px;
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .solution-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 24px 48px rgba(0, 50, 150, 0.12);
+            border-color: transparent;
+        }
+
+        .solution-card.featured {
+            background: linear-gradient(135deg, #FFFFFF 0%, #F8FAFF 100%);
+            border: 2px solid var(--primary);
+        }
+
+        .featured-badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, var(--primary) 0%, #6366F1 100%);
+            color: #FFFFFF;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .solution-icon-wrapper {
+            width: 64px;
+            height: 64px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 24px;
+        }
+
+        .solution-icon-wrapper.finance {
+            background: linear-gradient(135deg, #FFF7E6 0%, #FFE4B5 100%);
+        }
+
+        .solution-icon-wrapper.manufacture {
+            background: linear-gradient(135deg, #E6F7FF 0%, #BAE7FF 100%);
+        }
+
+        .solution-icon-wrapper.legal {
+            background: linear-gradient(135deg, #F0E8FF 0%, #D9C7FF 100%);
+        }
+
+        .solution-icon {
+            font-size: 32px;
+        }
+
+        .solution-name {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1A1A1A;
+            margin-bottom: 12px;
+        }
+
+        .solution-desc {
+            font-size: 15px;
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 24px;
+        }
+
+        .solution-features {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 24px 0;
+        }
+
+        .solution-features li {
+            font-size: 14px;
+            color: #444;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .solution-features li:last-child {
+            border-bottom: none;
+        }
+
+        .solution-stats {
+            display: flex;
+            gap: 24px;
+            padding: 20px 0;
+            border-top: 1px solid rgba(0, 0, 0, 0.06);
+            margin-bottom: 20px;
+        }
+
+        .solution-stats .stat {
+            text-align: center;
+            flex: 1;
+        }
+
+        .solution-stats .stat-value {
+            display: block;
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+
+        .solution-stats .stat-label {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .solution-link {
+            display: inline-flex;
+            align-items: center;
+            color: var(--primary);
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .solution-link:hover {
+            color: var(--primary-dark);
+            transform: translateX(4px);
+        }
+
+        .solutions-cta {
+            text-align: center;
+            padding: 40px;
+            background: linear-gradient(135deg, #F8FAFF 0%, #FFFFFF 100%);
+            border-radius: 20px;
+            border: 1px dashed rgba(0, 102, 255, 0.3);
+        }
+
+        .solutions-cta p {
+            font-size: 18px;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .btn-outline {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 28px;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .btn-outline:hover {
+            background: var(--primary);
+            color: #FFFFFF;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 102, 255, 0.25);
+        }
+
+        /* 响应式 */
+        @media (max-width: 1024px) {
+            .solutions-grid {
+                grid-template-columns: 1fr;
+                gap: 24px;
+            }
+
+            .solutions-section {
+                padding: 60px 24px;
+            }
+
+            .solutions-title {
+                font-size: 32px;
+            }
+        }
+
+        /* ========== 客户案例 Section ========== */
+        .customers-section {
+            padding: 80px 80px 100px;
+            background: #FFFFFF;
+        }
+
+        .customers-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .customers-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .customers-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            background: linear-gradient(135deg, #FFF7E6 0%, #FFE4B5 100%);
+            color: #F59E0B;
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .customers-title {
+            font-size: 42px;
+            font-weight: 700;
+            color: #1A1A1A;
+            margin-bottom: 16px;
+        }
+
+        .customers-subtitle {
+            font-size: 18px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .section-subtitle {
+            font-size: 24px;
+            font-weight: 600;
+            color: #1A1A1A;
+            margin-bottom: 30px;
+        }
+
+        /* 标杆客户故事 */
+        .case-studies {
+            margin-bottom: 80px;
+        }
+
+        .case-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+        }
+
+        .case-card {
+            background: linear-gradient(135deg, #F8FAFF 0%, #FFFFFF 100%);
+            border-radius: 20px;
+            padding: 32px;
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            transition: all 0.3s ease;
+        }
+
+        .case-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 50, 150, 0.1);
+        }
+
+        .case-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .case-logo {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, #E6F0FF 0%, #D4E4FF 100%);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+        }
+
+        .case-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .case-company {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1A1A1A;
+            margin: 0;
+        }
+
+        .case-industry {
+            font-size: 13px;
+            color: var(--primary);
+            font-weight: 500;
+        }
+
+        .case-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+
+        .case-desc {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .case-metrics {
+            display: flex;
+            gap: 16px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(0, 0, 0, 0.06);
+        }
+
+        .case-metrics .metric {
+            flex: 1;
+            text-align: center;
+        }
+
+        .case-metrics .metric-value {
+            display: block;
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+
+        .case-metrics .metric-label {
+            font-size: 11px;
+            color: #999;
+        }
+
+        /* 客户评价 */
+        .testimonials {
+            margin-top: 40px;
+        }
+
+        .testimonial-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+        }
+
+        .testimonial-card {
+            background: #FFFFFF;
+            border-radius: 16px;
+            padding: 28px;
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .testimonial-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        .testimonial-content {
+            flex: 1;
+            margin-bottom: 20px;
+        }
+
+        .testimonial-content p {
+            font-size: 14px;
+            color: #444;
+            line-height: 1.7;
+            font-style: italic;
+        }
+
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .author-avatar {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, var(--primary) 0%, #6366F1 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #FFFFFF;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .author-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .author-name {
+            font-size: 15px;
+            font-weight: 600;
+            color: #1A1A1A;
+        }
+
+        .author-title {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .testimonial-rating {
+            font-size: 14px;
+            letter-spacing: 2px;
+        }
+
+        /* 响应式 */
+        @media (max-width: 1024px) {
+            .case-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .testimonial-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .customers-section {
+                padding: 60px 24px;
+            }
+
+            .customers-title {
+                font-size: 32px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .testimonial-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ========== 关于我们 Section ========== */
+        .about-section {
+            padding: 100px 80px;
+            background: linear-gradient(180deg, #F8FAFF 0%, #FFFFFF 100%);
+        }
+
+        .about-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .about-intro {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 60px;
+            margin-bottom: 80px;
+        }
+
+        .about-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            background: linear-gradient(135deg, #E8F4FF 0%, #D4E8FF 100%);
+            color: var(--primary);
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .about-title {
+            font-size: 38px;
+            font-weight: 700;
+            color: #1A1A1A;
+            margin-bottom: 24px;
+            line-height: 1.3;
+        }
+
+        .about-desc {
+            font-size: 16px;
+            color: #555;
+            line-height: 1.8;
+            margin-bottom: 16px;
+        }
+
+        .about-desc strong {
+            color: var(--primary);
+        }
+
+        .about-highlights {
+            display: flex;
+            gap: 32px;
+            margin-top: 36px;
+            padding-top: 32px;
+            border-top: 1px solid rgba(0, 0, 0, 0.08);
+        }
+
+        .highlight-item {
+            text-align: center;
+        }
+
+        .highlight-number {
+            display: block;
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+
+        .highlight-label {
+            font-size: 13px;
+            color: #999;
+        }
+
+        .about-visual {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .visual-card {
+            background: #FFFFFF;
+            border-radius: 20px;
+            padding: 32px;
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
+        }
+
+        .visual-icon {
+            font-size: 36px;
+            margin-bottom: 16px;
+        }
+
+        .visual-card h4 {
+            font-size: 20px;
+            font-weight: 600;
+            color: #1A1A1A;
+            margin-bottom: 12px;
+        }
+
+        .visual-card p {
+            font-size: 15px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* 核心价值观 */
+        .core-values {
+            margin-bottom: 80px;
+        }
+
+        .values-title {
+            font-size: 28px;
+            font-weight: 600;
+            color: #1A1A1A;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .values-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+        }
+
+        .value-card {
+            background: #FFFFFF;
+            border-radius: 16px;
+            padding: 28px;
+            text-align: center;
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            transition: all 0.3s ease;
+        }
+
+        .value-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px rgba(0, 50, 150, 0.08);
+        }
+
+        .value-icon {
+            font-size: 32px;
+            margin-bottom: 16px;
+        }
+
+        .value-card h4 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1A1A1A;
+            margin-bottom: 10px;
+        }
+
+        .value-card p {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.5;
+        }
+
+        /* 联系我们 */
+        .contact-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            background: linear-gradient(135deg, #F8FAFF 0%, #FFFFFF 100%);
+            border-radius: 24px;
+            padding: 48px;
+            border: 1px solid rgba(0, 0, 0, 0.06);
+        }
+
+        .contact-info h3 {
+            font-size: 28px;
+            font-weight: 600;
+            color: #1A1A1A;
+            margin-bottom: 12px;
+        }
+
+        .contact-desc {
+            font-size: 15px;
+            color: #666;
+            margin-bottom: 32px;
+        }
+
+        .contact-details {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+        }
+
+        .contact-icon {
+            font-size: 24px;
+        }
+
+        .contact-label {
+            display: block;
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 4px;
+        }
+
+        .contact-item a,
+        .contact-item span:not(.contact-icon):not(.contact-label) {
+            font-size: 15px;
+            color: #1A1A1A;
+            text-decoration: none;
+        }
+
+        .contact-item a:hover {
+            color: var(--primary);
+        }
+
+        .contact-cta {
+            background: linear-gradient(135deg, var(--primary) 0%, #6366F1 100%);
+            border-radius: 20px;
+            padding: 48px;
+            text-align: center;
+            color: #FFFFFF;
+        }
+
+        .contact-cta h4 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .contact-cta p {
+            font-size: 15px;
+            opacity: 0.9;
+            margin-bottom: 28px;
+        }
+
+        .btn-primary-large {
+            display: inline-block;
+            padding: 16px 36px;
+            background: #FFFFFF;
+            color: var(--primary);
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary-large:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        /* ========== Footer ========== */
+        .site-footer {
+            background: #1A1A1A;
+            padding: 60px 80px 30px;
+            color: #FFFFFF;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-main {
+            display: flex;
+            justify-content: space-between;
+            padding-bottom: 40px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .footer-logo-img {
+            height: 32px;
+            width: auto;
+        }
+
+        .footer-logo span {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .footer-tagline {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 80px;
+        }
+
+        .footer-column h5 {
+            font-size: 14px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 20px;
+        }
+
+        .footer-column a {
+            display: block;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.6);
+            text-decoration: none;
+            margin-bottom: 12px;
+            transition: color 0.2s ease;
+        }
+
+        .footer-column a:hover {
+            color: #FFFFFF;
+        }
+
+        .footer-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 24px;
+        }
+
+        .footer-bottom p {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .footer-legal {
+            display: flex;
+            gap: 24px;
+        }
+
+        .footer-legal a {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.5);
+            text-decoration: none;
+        }
+
+        .footer-legal a:hover {
+            color: #FFFFFF;
+        }
+
+        /* 响应式 - 关于我们 */
+        @media (max-width: 1024px) {
+            .about-intro {
+                grid-template-columns: 1fr;
+            }
+
+            .values-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .contact-section {
+                grid-template-columns: 1fr;
+            }
+
+            .about-section {
+                padding: 60px 24px;
+            }
+
+            .footer-main {
+                flex-direction: column;
+                gap: 40px;
+            }
+
+            .footer-links {
+                gap: 40px;
+            }
+
+            .site-footer {
+                padding: 40px 24px 24px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .about-highlights {
+                flex-wrap: wrap;
+                gap: 24px;
+            }
+
+            .highlight-item {
+                flex: 1 1 40%;
+            }
+
+            .values-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="logo-section">
+            <img src="assets/logo.png" alt="GradeLight Logo" class="logo-img">
+            <span class="logo-text">GradeLight</span>
+        </div>
+        <div class="nav-links">
+            <div class="nav-item">
+                <a href="#">产品</a>
+                <!-- Mega Menu -->
+                <div class="mega-menu">
+                    <div class="mega-menu-header">
+                        <span class="mega-menu-title">产品中心 · 梯度光年（GradeLight）企业级智能办公套件</span>
+                    </div>
+                    <div class="mega-grid">
+                        <!-- Product 1 -->
+                        <div class="product-card"
+                            onclick="switchTab('ocr'); document.getElementById('product-showcase').scrollIntoView({behavior: 'smooth'})"
+                            style="cursor: pointer;">
+                            <div class="product-icon">📄</div>
+                            <div class="product-title">
+                                智能文档智搜
+                                <span class="product-tag">OCR RAG</span>
+                            </div>
+                            <p class="product-desc">利用 OCR 深度识别，将合同、票据等转化为可检索数据，让沉睡档案秒懂秒查。</p>
+                        </div>
+
+                        <!-- Product 2 -->
+                        <div class="product-card"
+                            onclick="switchTab('vlm'); document.getElementById('product-showcase').scrollIntoView({behavior: 'smooth'})"
+                            style="cursor: pointer;">
+                            <div class="product-icon"><i data-lucide="ruler" class="w-5 h-5"></i></div>
+                            <div class="product-title">
+                                专业的图纸分析
+                                <span class="product-tag">VLM RAG</span>
+                            </div>
+                            <p class="product-desc">基于 VLM 多模态大模型，直接理解架构图、CAD 图纸的空间逻辑与参数信息。</p>
+                        </div>
+
+                        <!-- Product 3 -->
+                        <div class="product-card"
+                            onclick="switchTab('agent'); document.getElementById('product-showcase').scrollIntoView({behavior: 'smooth'})"
+                            style="cursor: pointer;">
+                            <div class="product-icon"><i data-lucide="scale" class="w-5 h-5"></i></div>
+                            <div class="product-title">
+                                智能合规审批
+                                <span class="product-tag">Agent</span>
+                            </div>
+                            <p class="product-desc">数字化风控官，自动预审合同与报销，识别违规风险并给出修改建议。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Solutions Mega Menu -->
+            <div class="nav-item">
+                <a href="#">解决方案</a>
+                <div class="mega-menu">
+                    <div class="mega-menu-header">
+                        <span class="mega-menu-title">行业解决方案 · 深度赋能垂直领域</span>
+                    </div>
+                    <div class="mega-grid">
+                        <a href="#" class="product-card">
+                            <div class="product-icon"><i data-lucide="coins" class="w-5 h-5"></i></div>
+                            <div class="product-title">金融科技</div>
+                            <p class="product-desc">智能风控、自动化信贷审批、合规审计，提升金融业务处理效率。</p>
+                        </a>
+                        <a href="#" class="product-card">
+                            <div class="product-icon"><i data-lucide="factory" class="w-5 h-5"></i></div>
+                            <div class="product-title">智能制造</div>
+                            <p class="product-desc">工业图纸解析、供应链文档管理、设备维护知识库，助力制造业数字化转型。</p>
+                        </a>
+                        <a href="#" class="product-card">
+                            <div class="product-icon"><i data-lucide="scale" class="w-5 h-5"></i></div>
+                            <div class="product-title">法律与政务</div>
+                            <p class="product-desc">卷宗自动归档、法规政策语义检索、公文自动生成，智慧政务首选。</p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cases Mega Menu -->
+            <div class="nav-item">
+                <a href="#">案例</a>
+                <div class="mega-menu">
+                    <div class="mega-menu-header">
+                        <span class="mega-menu-title">客户成功 · 见证数字化转型力量</span>
+                    </div>
+                    <div class="mega-grid">
+                        <a href="#customers" class="product-card">
+                            <div class="product-icon"><i data-lucide="trophy" class="w-5 h-5"></i></div>
+                            <div class="product-title">标杆客户故事</div>
+                            <p class="product-desc">看看行业领军者如何通过 GradeLight 实现数字化转型，提升核心竞争力。</p>
+                        </a>
+                        <a href="#customers" class="product-card">
+                            <div class="product-icon"><i data-lucide="message-circle" class="w-5 h-5"></i></div>
+                            <div class="product-title">客户评价</div>
+                            <p class="product-desc">来自 CTO、CIO 及一线使用者的真实反馈，听听他们怎么说。</p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- About Us Mega Menu -->
+            <div class="nav-item">
+                <a href="#">关于我们</a>
+                <div class="mega-menu">
+                    <div class="mega-menu-header">
+                        <span class="mega-menu-title">关于梯度光年 · GradeLight</span>
+                    </div>
+                    <div class="mega-grid">
+                        <a href="#" class="product-card">
+                            <div class="product-icon"><i data-lucide="sparkles" class="w-5 h-5"></i></div>
+                            <div class="product-title">公司愿景</div>
+                            <p class="product-desc">用 AI 重塑企业生产力，让工作从繁琐中解放，每个人都能专注于创造价值。</p>
+                        </a>
+                        <a href="#" class="product-card">
+                            <div class="product-icon"><i data-lucide="users" class="w-5 h-5"></i></div>
+                            <div class="product-title">核心团队</div>
+                            <p class="product-desc">由前大厂资深科学家与工程师领衔，汇聚全球顶尖 AI 人才。</p>
+                        </a>
+                        <a href="#about" class="product-card">
+                            <div class="product-icon"><i data-lucide="phone" class="w-5 h-5"></i></div>
+                            <div class="product-title">联系支持</div>
+                            <p class="product-desc">预约专属演示、商务合作洽谈或获取技术支持，我们要随时为您服务。</p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <a href="#about" class="cta-button">预约演示</a>
+    </nav>
+
+    <!-- 加载 Spline Viewer SDK -->
+    <script type="module" src="https://unpkg.com/@splinetool/viewer@1.12.41/build/spline-viewer.js"></script>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-decoration decoration-1"></div>
+        <div class="hero-decoration decoration-2"></div>
+
+        <!-- 3. 背景流动线条 SVG -->
+        <svg class="flow-line" viewBox="0 0 1440 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M-100 600 C 200 400, 600 800, 1500 200" stroke="url(#paint0_linear)" stroke-width="1.5"
+                stroke-dasharray="10 10" />
+            <path d="M-100 800 C 300 500, 700 900, 1600 300" stroke="url(#paint1_linear)" stroke-width="1"
+                opacity="0.6" />
+            <defs>
+                <linearGradient id="paint0_linear" x1="0" y1="0" x2="1440" y2="0" gradientUnits="userSpaceOnUse">
+                    <stop stop-color="var(--primary)" stop-opacity="0" />
+                    <stop offset="0.5" stop-color="var(--primary)" stop-opacity="0.2" />
+                    <stop offset="1" stop-color="var(--primary)" stop-opacity="0" />
+                </linearGradient>
+                <linearGradient id="paint1_linear" x1="0" y1="0" x2="1440" y2="0" gradientUnits="userSpaceOnUse">
+                    <stop stop-color="#8B5CF6" stop-opacity="0" />
+                    <stop offset="0.5" stop-color="#8B5CF6" stop-opacity="0.15" />
+                    <stop offset="1" stop-color="#8B5CF6" stop-opacity="0" />
+                </linearGradient>
+            </defs>
+        </svg>
+
+        <div class="hero-content">
+            <!-- 左侧文字内容 -->
+            <div class="hero-left">
+                <h1 class="hero-title">
+                    <span class="typewriter-container">
+                        <span class="typewriter-text" id="typewriter"></span>
+                    </span>
+                </h1>
+                <p class="hero-subtitle">
+                    GradeLight 专注于企业级 AI 应用开发，为您打造智能化解决方案。
+                    让 AI 成为您业务增长的核心驱动力。
+                </p>
+                <div class="hero-ctas">
+                    <a href="#products" class="btn-primary">
+                        立即体验
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7" />
+                        </svg>
+                    </a>
+                    <a href="#about" class="btn-secondary">
+                        了解更多
+                    </a>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <div class="stat-number">500<span class="plus">+</span></div>
+                        <div class="stat-label">企业客户</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">99.9<span class="plus">%</span></div>
+                        <div class="stat-label">服务可用性</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">10<span class="plus">M+</span></div>
+                        <div class="stat-label">API 调用/日</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 右侧3D机器人 -->
+            <div class="hero-right">
+                <div class="spline-container">
+                    <spline-viewer url="https://prod.spline.design/XjUV1h7c9Q6BMryI/scene.splinecode"></spline-viewer>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Product Feature Switcher -->
+    <div id="product-showcase" class="feature-switcher-container">
+        <!-- Sidebar Navigation -->
+        <div class="switcher-sidebar">
+            <div class="switcher-header">
+                <h3>Product Suite</h3>
+            </div>
+
+            <div class="switcher-tab active" onclick="switchTab('ocr')">
+                <div class="tab-icon">📄</div>
+                <div class="tab-info">
+                    <span class="tab-title">智能文档智搜</span>
+                    <span class="tab-subtitle">OCR RAG 引擎</span>
+                </div>
+            </div>
+
+            <div class="switcher-tab" onclick="switchTab('vlm')">
+                <div class="tab-icon"><i data-lucide="ruler" class="w-5 h-5"></i></div>
+                <div class="tab-info">
+                    <span class="tab-title">图纸分析专家</span>
+                    <span class="tab-subtitle">VLM 多模态</span>
+                </div>
+            </div>
+
+            <div class="switcher-tab" onclick="switchTab('agent')">
+                <div class="tab-icon"><i data-lucide="scale" class="w-5 h-5"></i></div>
+                <div class="tab-info">
+                    <span class="tab-title">合规审批 Agent</span>
+                    <span class="tab-subtitle">智能风控</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content Area -->
+        <div class="switcher-content">
+            <!-- Panel 1: OCR -->
+            <div id="panel-ocr" class="content-panel active">
+                <span class="panel-tag">核心产品</span>
+                <h2 class="panel-title">唤醒沉睡的企业档案</h2>
+                <p class="panel-desc">利用 OCR 深度识别技术，将合同、票据、财务报表及手写批注转化为可检索的结构化数据。解决企业非结构化数据查找难、利用率低的痛点。</p>
+                <div class="panel-grid">
+                    <div class="panel-feature">
+                        <i><i data-lucide="search" class="w-5 h-5"></i></i> <span>OCR 深度识别</span>
+                    </div>
+                    <div class="panel-feature">
+                        <i><i data-lucide="zap" class="w-5 h-5"></i></i> <span>秒级全库检索</span>
+                    </div>
+                    <div class="panel-feature">
+                        <i><i data-lucide="folder" class="w-5 h-5"></i></i> <span>结构化自动归档</span>
+                    </div>
+                    <div class="panel-feature">
+                        <i><i data-lucide="pen-tool" class="w-5 h-5"></i></i> <span>手写体精准识别</span>
+                    </div>
+                </div>
+                <div class="panel-visual">
+                    <img src="assets/prod_ocr_scan.png" alt="OCR RAG">
+                </div>
+            </div>
+
+            <!-- Panel 2: VLM -->
+            <div id="panel-vlm" class="content-panel">
+                <span class="panel-tag" style="background: #F3E6FF; color: #8B5CF6;">工科利器</span>
+                <h2 class="panel-title">读懂复杂的工程图纸</h2>
+                <p class="panel-desc">基于 VLM 多模态大模型，直接理解架构图、CAD 图纸、工业流程图的空间逻辑与参数信息。实现对复杂图形资料的语义检索与技术问答。</p>
+                <div class="panel-grid">
+                    <div class="panel-feature">
+                        <i><i data-lucide="ruler" class="w-5 h-5"></i></i> <span>多模态图形理解</span>
+                    </div>
+                    <div class="panel-feature">
+                        <i>🏗️</i> <span>CAD/蓝图解析</span>
+                    </div>
+                    <div class="panel-feature">
+                        <i>🧠</i> <span>空间逻辑推理</span>
+                    </div>
+                    <div class="panel-feature">
+                        <i><i data-lucide="message-circle" class="w-5 h-5"></i></i> <span>技术图纸问答</span>
+                    </div>
+                </div>
+                <div class="panel-visual">
+                    <img src="assets/prod_vlm_blueprint.png" alt="VLM RAG">
+                </div>
+            </div>
+
+            <!-- Panel 3: Agent -->
+            <div id="panel-agent" class="content-panel">
+                <span class="panel-tag" style="background: #FFF7E6; color: #F59E0B;">自动化</span>
+                <h2 class="panel-title">您的 24h 智能风控官</h2>
+                <p class="panel-desc">自动根据企业规章制度、法律条款对提交的申请文档进行预审，识别违规风险并给出修改建议。将繁琐的财务报销审核、法务合同校对自动化。</p>
+                <div class="panel-grid">
+                    <div class="panel-feature">
+                        <i>🛡️</i> <span>自动合规预审</span>
+                    </div>
+                    <div class="panel-feature">
+                        <i><i data-lucide="alert-triangle" class="w-5 h-5"></i></i> <span>风险点识别</span>
+                    </div>
+                    <div class="panel-feature">
+                        <i><i data-lucide="file-text" class="w-5 h-5"></i></i> <span>修改建议生成</span>
+                    </div>
+                    <div class="panel-feature">
+                        <i><i data-lucide="coins" class="w-5 h-5"></i></i> <span>降本增效工具</span>
+                    </div>
+                </div>
+                <div class="panel-visual">
+                    <img src="assets/prod_workflow_agent.png" alt="Workflow Agent">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 解决方案 Section -->
+    <section id="solutions" class="solutions-section">
+        <div class="solutions-container">
+            <div class="solutions-header">
+                <span class="solutions-badge">行业解决方案</span>
+                <h2 class="solutions-title">深度赋能垂直领域</h2>
+                <p class="solutions-subtitle">针对不同行业痛点，提供量身定制的 AI 智能化解决方案，助力企业数字化转型</p>
+            </div>
+
+            <div class="solutions-grid">
+                <!-- 金融科技 -->
+                <div class="solution-card">
+                    <div class="solution-icon-wrapper finance">
+                        <span class="solution-icon"><i data-lucide="coins" class="w-5 h-5"></i></span>
+                    </div>
+                    <h3 class="solution-name">金融科技</h3>
+                    <p class="solution-desc">智能风控、自动化信贷审批、合规审计，提升金融业务处理效率，降低操作风险。</p>
+                    <ul class="solution-features">
+                        <li><i data-lucide="shield-check" class="w-5 h-5"></i> 智能反欺诈检测</li>
+                        <li><i data-lucide="bar-chart-2" class="w-5 h-5"></i> 信贷风险评估</li>
+                        <li><i data-lucide="clipboard-check" class="w-5 h-5"></i> 自动化合规审计</li>
+                        <li><i data-lucide="zap" class="w-5 h-5"></i> 实时交易监控</li>
+                    </ul>
+                    <div class="solution-stats">
+                        <div class="stat">
+                            <span class="stat-value">85%</span>
+                            <span class="stat-label">审批效率提升</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value">60%</span>
+                            <span class="stat-label">风险识别率提升</span>
+                        </div>
+                    </div>
+                    <a href="#case-finance" class="solution-link">了解更多 →</a>
+                </div>
+
+                <!-- 智能制造 -->
+                <div class="solution-card featured">
+                    <div class="featured-badge">热门</div>
+                    <div class="solution-icon-wrapper manufacture">
+                        <span class="solution-icon"><i data-lucide="factory" class="w-5 h-5"></i></span>
+                    </div>
+                    <h3 class="solution-name">智能制造</h3>
+                    <p class="solution-desc">工业图纸解析、供应链文档管理、设备维护知识库，助力制造业数字化转型升级。</p>
+                    <ul class="solution-features">
+                        <li><i data-lucide="ruler" class="w-5 h-5"></i> CAD图纸智能解析</li>
+                        <li><i data-lucide="wrench" class="w-5 h-5"></i> 设备维护知识库</li>
+                        <li><i data-lucide="package" class="w-5 h-5"></i> 供应链文档管理</li>
+                        <li><i data-lucide="bot" class="w-5 h-5"></i> 生产流程自动化</li>
+                    </ul>
+                    <div class="solution-stats">
+                        <div class="stat">
+                            <span class="stat-value">70%</span>
+                            <span class="stat-label">图纸检索效率</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value">40%</span>
+                            <span class="stat-label">维护成本下降</span>
+                        </div>
+                    </div>
+                    <a href="#case-manufacturing" class="solution-link">了解更多 →</a>
+                </div>
+
+                <!-- 法律与政务 -->
+                <div class="solution-card">
+                    <div class="solution-icon-wrapper legal">
+                        <span class="solution-icon"><i data-lucide="scale" class="w-5 h-5"></i></span>
+                    </div>
+                    <h3 class="solution-name">法律与政务</h3>
+                    <p class="solution-desc">卷宗自动归档、法规政策语义检索、公文自动生成，打造智慧政务新标杆。</p>
+                    <ul class="solution-features">
+                        <li><i data-lucide="folder" class="w-5 h-5"></i> 卷宗智能归档</li>
+                        <li><i data-lucide="search" class="w-5 h-5"></i> 法规语义检索</li>
+                        <li><i data-lucide="file-text" class="w-5 h-5"></i> 公文自动生成</li>
+                        <li><i data-lucide="building-2" class="w-5 h-5"></i> 政务流程优化</li>
+                    </ul>
+                    <div class="solution-stats">
+                        <div class="stat">
+                            <span class="stat-value">90%</span>
+                            <span class="stat-label">文档处理效率</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value">50%</span>
+                            <span class="stat-label">人工成本节省</span>
+                        </div>
+                    </div>
+                    <a href="#case-legal" class="solution-link">了解更多 →</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 客户案例 Section -->
+    <section id="customers" class="customers-section">
+        <div class="customers-container">
+            <div class="customers-header">
+                <span class="customers-badge">客户成功</span>
+                <h2 class="customers-title">见证数字化转型力量</h2>
+                <p class="customers-subtitle">来自行业领军企业的真实案例与评价</p>
+            </div>
+
+            <!-- 标杆客户故事 -->
+            <div class="case-studies">
+                <h3 class="section-subtitle"><i data-lucide="trophy" class="w-5 h-5"></i> 标杆客户故事</h3>
+                <div class="case-grid">
+                    <!-- 案例1: 金融科技 -->
+                    <div id="case-finance" class="case-card">
+                        <div class="case-header">
+                            <div class="case-logo"><i data-lucide="landmark" class="w-5 h-5"></i></div>
+                            <div class="case-info">
+                                <h4 class="case-company">某大型国有银行</h4>
+                                <span class="case-industry">金融科技</span>
+                            </div>
+                        </div>
+                        <h5 class="case-title">智能风控系统助力信贷审批效率提升 300%</h5>
+                        <p class="case-desc">通过部署 GradeLight 智能文档智搜系统，该银行实现了信贷申请材料的自动化识别与审核，将原本需要 3 天的审批流程缩短至 2 小时内完成。
+                        </p>
+                        <div class="case-metrics">
+                            <div class="metric">
+                                <span class="metric-value">300%</span>
+                                <span class="metric-label">效率提升</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-value">2小时</span>
+                                <span class="metric-label">审批时间</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-value">95%</span>
+                                <span class="metric-label">识别准确率</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 案例2: 智能制造 -->
+                    <div id="case-manufacturing" class="case-card">
+                        <div class="case-header">
+                            <div class="case-logo"><i data-lucide="factory" class="w-5 h-5"></i></div>
+                            <div class="case-info">
+                                <h4 class="case-company">某世界500强制造企业</h4>
+                                <span class="case-industry">智能制造</span>
+                            </div>
+                        </div>
+                        <h5 class="case-title">工程图纸知识库打通研发-生产全链路</h5>
+                        <p class="case-desc">利用 VLM 多模态图纸分析能力，构建了覆盖 10 万+工程图纸的智能知识库，工程师可通过自然语言快速检索历史设计方案与技术参数。</p>
+                        <div class="case-metrics">
+                            <div class="metric">
+                                <span class="metric-value">10万+</span>
+                                <span class="metric-label">图纸入库</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-value">70%</span>
+                                <span class="metric-label">检索效率</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-value">40%</span>
+                                <span class="metric-label">研发周期缩短</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 案例3: 法律与政务 -->
+                    <div id="case-legal" class="case-card">
+                        <div class="case-header">
+                            <div class="case-logo"><i data-lucide="building-2" class="w-5 h-5"></i></div>
+                            <div class="case-info">
+                                <h4 class="case-company">某省级政务服务中心</h4>
+                                <span class="case-industry">智慧政务</span>
+                            </div>
+                        </div>
+                        <h5 class="case-title">政务档案智能化改造实现"秒批秒办"</h5>
+                        <p class="case-desc">通过 OCR 深度识别与智能归档系统，将 20 年积累的纸质档案完成数字化转型，群众办事由"跑多趟"变为"一次办成"。</p>
+                        <div class="case-metrics">
+                            <div class="metric">
+                                <span class="metric-value">500万+</span>
+                                <span class="metric-label">档案数字化</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-value">90%</span>
+                                <span class="metric-label">办事效率</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-value">98%</span>
+                                <span class="metric-label">群众满意度</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 客户评价 -->
+            <div class="testimonials">
+                <h3 class="section-subtitle"><i data-lucide="message-circle" class="w-5 h-5"></i> 客户评价</h3>
+                <div class="testimonial-grid">
+                    <!-- 评价1 -->
+                    <div class="testimonial-card">
+                        <div class="testimonial-content">
+                            <p>"GradeLight 的 OCR 识别准确率超出了我们的预期，特别是对手写批注的识别能力，彻底解决了我们历史档案数字化的痛点。"</p>
+                        </div>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">张</div>
+                            <div class="author-info">
+                                <span class="author-name">张总监</span>
+                                <span class="author-title">某上市公司 IT 中心</span>
+                            </div>
+                        </div>
+                        <div class="testimonial-rating"><i data-lucide="star"
+                                class="w-4 h-4 fill-amber-400 text-amber-400"></i><i data-lucide="star"
+                                class="w-4 h-4 fill-amber-400 text-amber-400"></i><i data-lucide="star"
+                                class="w-4 h-4 fill-amber-400 text-amber-400"></i><i data-lucide="star"
+                                class="w-4 h-4 fill-amber-400 text-amber-400"></i><i data-lucide="star"
+                                class="w-4 h-4 fill-amber-400 text-amber-400"></i></div>
+                    </div>
+
+                    <!-- 评价2 -->
+                    <div class="testimonial-card">
+                        <div class="testimonial-content">
+                            <p>"图纸分析功能让我们的工程师效率提升了一倍以上，以前需要翻阅大量图纸找参数，现在直接问 AI 就能得到准确答案。"</p>
+                        </div>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">李</div>
+                            <div class="author-info">
+                                <span class="author-name">李工程师</span>
+                                <span class="author-title">某汽车零部件企业</span>
+                            </div>
+                        </div>
+                        <div class="testimonial-rating"><i data-lucide="star"
+                                class="w-4 h-4 fill-amber-400 text-amber-400"></i><i data-lucide="star"
+                                class="w-4 h-4 fill-amber-400 text-amber-400"></i><i data-lucide="star"
+                                class="w-4 h-4 fill-amber-400 text-amber-400"></i><i data-lucide="star"
+                                class="w-4 h-4 fill-amber-400 text-amber-400"></i><i data-lucide="star"
+                                class="w-4 h-4 fill-amber-400 text-amber-400"></i></div>
+                    </div>
+
+                    <!-- 评价3 -->
+                    <div class="testimonial-card">
+                        <div class="testimonial-content">
+                            <p>"合规审批 Agent 帮我们把财务报销审核时间从 3 天缩短到 30 分钟，而且风险识别比人工更全面，强烈推荐！"</p>
+                        </div>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">王</div>
+                            <div class="author-info">
+                                <span class="author-name">王 CFO</span>
+                                <span class="author-title">某互联网科技公司</span>
+                            </div>
+                        </div>
+                        <div class="testimonial-rating"><i data-lucide="star"
+                                class="w-4 h-4 fill-amber-400 text-amber-400"></i><i data-lucide="star"
+                                class="w-4 h-4 fill-amber-400 text-amber-400"></i><i data-lucide="star"
+                                class="w-4 h-4 fill-amber-400 text-amber-400"></i><i data-lucide="star"
+                                class="w-4 h-4 fill-amber-400 text-amber-400"></i><i data-lucide="star"
+                                class="w-4 h-4 fill-amber-400 text-amber-400"></i></div>
+                    </div>
+
+                    <!-- 评价4 -->
+                    <div class="testimonial-card">
+                        <div class="testimonial-content">
+                            <p>"作为 CTO，我对技术选型非常谨慎。GradeLight 团队的专业度和产品的稳定性都让人放心，99.9% 的可用性不是说说而已。"</p>
+                        </div>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">陈</div>
+                            <div class="author-info">
+                                <span class="author-name">陈 CTO</span>
+                                <span class="author-title">某独角兽企业</span>
+                            </div>
+                        </div>
+                        <div class="testimonial-rating"><i data-lucide="star"
+                                class="w-4 h-4 fill-amber-400 text-amber-400"></i><i data-lucide="star"
+                                class="w-4 h-4 fill-amber-400 text-amber-400"></i><i data-lucide="star"
+                                class="w-4 h-4 fill-amber-400 text-amber-400"></i><i data-lucide="star"
+                                class="w-4 h-4 fill-amber-400 text-amber-400"></i><i data-lucide="star"
+                                class="w-4 h-4 fill-amber-400 text-amber-400"></i></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 关于我们 Section -->
+    <section id="about" class="about-section">
+        <div class="about-container">
+            <!-- 公司介绍 -->
+            <div class="about-intro">
+                <div class="about-content">
+                    <span class="about-badge">关于梯度光年</span>
+                    <h2 class="about-title">用 AI 重新定义企业办公</h2>
+                    <p class="about-desc">
+                        <strong>GradeLight（梯度光年）</strong>是一家专注于企业级 AI
+                        应用开发的科技公司。我们致力于将前沿的人工智能技术与企业实际业务场景深度融合，为客户提供智能化、高效率的数字化转型解决方案。
+                    </p>
+                    <p class="about-desc">
+                        自成立以来，我们已服务超过 <strong>500+</strong>
+                        家企业客户，覆盖金融、制造、法律、政务等多个行业，帮助企业实现文档智能化处理、知识库构建与智能检索、流程自动化审批等核心能力升级。
+                    </p>
+                    <div class="about-highlights">
+                        <div class="highlight-item">
+                            <span class="highlight-number">2021</span>
+                            <span class="highlight-label">成立年份</span>
+                        </div>
+                        <div class="highlight-item">
+                            <span class="highlight-number">500+</span>
+                            <span class="highlight-label">服务客户</span>
+                        </div>
+                        <div class="highlight-item">
+                            <span class="highlight-number">50+</span>
+                            <span class="highlight-label">核心团队</span>
+                        </div>
+                        <div class="highlight-item">
+                            <span class="highlight-number">10+</span>
+                            <span class="highlight-label">技术专利</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="about-visual">
+                    <div class="visual-card">
+                        <div class="visual-icon"><i data-lucide="target" class="w-5 h-5"></i></div>
+                        <h4>我们的使命</h4>
+                        <p>让每一家企业都能轻松拥抱 AI，实现降本增效与业务创新</p>
+                    </div>
+                    <div class="visual-card">
+                        <div class="visual-icon"><i data-lucide="telescope" class="w-5 h-5"></i></div>
+                        <h4>我们的愿景</h4>
+                        <p>成为企业数字化转型最值得信赖的 AI 技术伙伴</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 核心价值观 -->
+            <div class="core-values">
+                <h3 class="values-title">核心价值观</h3>
+                <div class="values-grid">
+                    <div class="value-card">
+                        <div class="value-icon"><i data-lucide="lightbulb" class="w-5 h-5"></i></div>
+                        <h4>技术驱动</h4>
+                        <p>持续投入前沿 AI 技术研发，保持技术领先优势</p>
+                    </div>
+                    <div class="value-card">
+                        <div class="value-icon"><i data-lucide="handshake" class="w-5 h-5"></i></div>
+                        <h4>客户至上</h4>
+                        <p>深入理解客户需求，提供量身定制的解决方案</p>
+                    </div>
+                    <div class="value-card">
+                        <div class="value-icon"><i data-lucide="rocket" class="w-5 h-5"></i></div>
+                        <h4>追求卓越</h4>
+                        <p>对产品质量精益求精，持续优化用户体验</p>
+                    </div>
+                    <div class="value-card">
+                        <div class="value-icon"><i data-lucide="shield-check" class="w-5 h-5"></i></div>
+                        <h4>安全可信</h4>
+                        <p>严格遵守数据安全规范，保障客户信息安全</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 联系我们 -->
+            <div class="contact-section">
+                <div class="contact-info">
+                    <h3>联系我们</h3>
+                    <p class="contact-desc">我们期待与您的交流，无论是产品咨询、商务合作还是技术支持</p>
+                    <div class="contact-details">
+                        <div class="contact-item">
+                            <span class="contact-icon"><i data-lucide="mail" class="w-5 h-5"></i></span>
+                            <div>
+                                <span class="contact-label">商务合作</span>
+                                <a href="mailto:bd@gradelight.ai">bd@gradelight.ai</a>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <span class="contact-icon"><i data-lucide="wrench" class="w-5 h-5"></i></span>
+                            <div>
+                                <span class="contact-label">技术支持</span>
+                                <a href="mailto:support@gradelight.ai">support@gradelight.ai</a>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <span class="contact-icon"><i data-lucide="map-pin" class="w-5 h-5"></i></span>
+                            <div>
+                                <span class="contact-label">公司地址</span>
+                                <span>内蒙古呼和浩特市 AI 模创空间</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="contact-cta">
+                    <h4>准备好开启 AI 之旅？</h4>
+                    <p>立即预约专属顾问，获取您的定制化解决方案</p>
+                    <a href="#" class="btn-primary-large">预约演示</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="footer-container">
+            <div class="footer-main">
+                <div class="footer-brand">
+                    <div class="footer-logo">
+                        <img src="assets/logo.png" alt="GradeLight" class="footer-logo-img">
+                        <span>GradeLight</span>
+                    </div>
+                    <p class="footer-tagline">用 AI 重新定义企业办公</p>
+                </div>
+                <div class="footer-links">
+                    <div class="footer-column">
+                        <h5>产品</h5>
+                        <a href="#">智能文档智搜</a>
+                        <a href="#">图纸分析专家</a>
+                        <a href="#">合规审批 Agent</a>
+                    </div>
+                    <div class="footer-column">
+                        <h5>解决方案</h5>
+                        <a href="#">金融科技</a>
+                        <a href="#">智能制造</a>
+                        <a href="#">法律与政务</a>
+                    </div>
+                    <div class="footer-column">
+                        <h5>关于我们</h5>
+                        <a href="#">公司介绍</a>
+                        <a href="#">加入我们</a>
+                        <a href="#">联系我们</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2024 GradeLight（梯度光年）. All rights reserved.</p>
+                <div class="footer-legal">
+                    <a href="#">隐私政策</a>
+                    <a href="#">服务条款</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const typewriter = document.getElementById('typewriter');
+            const text = '用 AI 重新定义\n应用体验';
+            let index = 0;
+            let isDeleting = false;
+            let displayText = '';
+            const typeSpeed = 120; // 打字速度
+            const deleteSpeed = 60; // 删除速度
+            const pauseTime = 2000; // 打完后停顿时间
+            const pauseBeforeType = 500; // 删完后停顿时间
+
+            function type() {
+                typewriter.classList.remove('done');
+
+                if (!isDeleting) {
+                    // 正在打字
+                    if (index < text.length) {
+                        let char = text.charAt(index);
+                        // 处理换行
+                        if (char === '\n') {
+                            displayText += '<br>';
+                        }
+                        // 处理 "AI" 高亮
+                        else if (text.substring(index, index + 2) === 'AI') {
+                            displayText += '<span class="highlight">AI</span>';
+                            index++; // 跳过 'I'
+                        } else {
+                            displayText += char;
+                        }
+                        index++;
+                        typewriter.innerHTML = displayText;
+                        setTimeout(type, typeSpeed);
+                    } else {
+                        // 打字完成，停顿后开始删除
+                        setTimeout(() => {
+                            isDeleting = true;
+                            type();
+                        }, pauseTime);
+                    }
+                } else {
+                    // 正在删除
+                    if (displayText.length > 0) {
+                        // 智能删除：处理HTML标签
+                        if (displayText.endsWith('</span>')) {
+                            // 删除整个highlight span
+                            displayText = displayText.replace(/<span class="highlight">AI<\/span>$/, '');
+                        } else if (displayText.endsWith('<br>')) {
+                            displayText = displayText.slice(0, -4);
+                        } else {
+                            displayText = displayText.slice(0, -1);
+                        }
+
+                        typewriter.innerHTML = displayText;
+                        setTimeout(type, deleteSpeed);
+                    } else {
+                        // 删除完成，重置并重新开始
+                        isDeleting = false;
+                        index = 0;
+                        setTimeout(type, pauseBeforeType);
+                    }
+                }
+            }
+
+            // 延迟500ms开始打字
+            setTimeout(type, 500);
+        });
+
+        // Tab Switching Logic
+        function switchTab(tabId) {
+            // Remove active class from all tabs
+            const tabs = document.querySelectorAll('.switcher-tab');
+            tabs.forEach(tab => tab.classList.remove('active'));
+
+            // Remove active class from all panels
+            const panels = document.querySelectorAll('.content-panel');
+            panels.forEach(panel => panel.classList.remove('active'));
+
+            // Activate clicked tab
+            // Find the tab that calls this function (rough logic, better to pass event or index)
+            // But since we use onclick hardcoded, we can manually match based on index or just re-query
+
+            // Simpler: Map tabId to Index
+            let index = 0;
+            if (tabId === 'ocr') index = 0;
+            if (tabId === 'vlm') index = 1;
+            if (tabId === 'agent') index = 2;
+
+            tabs[index].classList.add('active');
+
+            // Activate corresponding panel
+            const panel = document.getElementById('panel-' + tabId);
+            if (panel) {
+                panel.classList.add('active');
+            }
+        }
+        // 导航栏滚动效果
+        const navbar = document.querySelector('.navbar');
+        window.addEventListener('scroll', function () {
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // 初始化 Lucide 图标
+        lucide.createIcons();
+    </script>
+</body>
+
+</html>

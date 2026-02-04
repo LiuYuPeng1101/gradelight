@@ -5,23 +5,70 @@ import Link from "next/link";
 import Spline from "@splinetool/react-spline";
 
 const Typewriter = () => {
-    const [text, setText] = useState("");
     const fullText = "用 AI 重新定义\n应用体验";
-    const [index, setIndex] = useState(0);
+    const [displayLength, setDisplayLength] = useState(0);
+    const [isDeleting, setIsDeleting] = useState(false);
 
     useEffect(() => {
-        if (index < fullText.length) {
-            const timeout = setTimeout(() => {
-                setText((prev) => prev + fullText.charAt(index));
-                setIndex((prev) => prev + 1);
-            }, 150);
-            return () => clearTimeout(timeout);
+        let timeout: NodeJS.Timeout;
+
+        if (!isDeleting) {
+            // 正在打字 - 逐个字符出现
+            if (displayLength < fullText.length) {
+                timeout = setTimeout(() => {
+                    setDisplayLength((prev) => prev + 1);
+                }, 150);
+            } else {
+                // 全部打完后，暂停一下再开始删除
+                timeout = setTimeout(() => {
+                    setIsDeleting(true);
+                }, 2000);
+            }
+        } else {
+            // 正在删除 - 从后往前逐个消失
+            if (displayLength > 0) {
+                timeout = setTimeout(() => {
+                    setDisplayLength((prev) => prev - 1);
+                }, 100);
+            } else {
+                // 全部删完后，暂停一下再开始重新打字
+                timeout = setTimeout(() => {
+                    setIsDeleting(false);
+                }, 500);
+            }
         }
-    }, [index, fullText]);
+
+        return () => clearTimeout(timeout);
+    }, [displayLength, isDeleting, fullText.length]);
+
+    // 渲染文字，为 "AI" 添加特殊样式
+    const renderText = () => {
+        const visibleText = fullText.substring(0, displayLength);
+        const parts: React.ReactNode[] = [];
+        let i = 0;
+
+        while (i < visibleText.length) {
+            // 检查是否是 "AI" 的开始位置
+            if (visibleText.substring(i, i + 2) === "AI") {
+                parts.push(
+                    <span key={i} className="highlight-ai">AI</span>
+                );
+                i += 2;
+            } else {
+                parts.push(visibleText[i]);
+                i++;
+            }
+        }
+
+        return parts;
+    };
 
     return (
         <span className="typewriter-container">
-            <span className="typewriter-text whitespace-pre-wrap">{text}</span>
+            <span className="typewriter-text whitespace-pre-wrap">
+                {renderText()}
+            </span>
+            <span className="typewriter-cursor">|</span>
         </span>
     );
 };

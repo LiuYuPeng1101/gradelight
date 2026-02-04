@@ -312,19 +312,33 @@ body {
 
 .typewriter-text {
   display: inline;
-  border-right: 3px solid var(--primary);
+}
+
+.highlight-ai {
+  background: linear-gradient(135deg, var(--primary) 0%, #8B5CF6 50%, #EC4899 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 800;
+}
+
+.typewriter-cursor {
+  display: inline;
+  color: var(--primary);
+  font-weight: 100;
   animation: blink 0.7s step-end infinite;
+  margin-left: 2px;
 }
 
 @keyframes blink {
 
   0%,
   100% {
-    border-color: var(--primary);
+    opacity: 1;
   }
 
   50% {
-    border-color: transparent;
+    opacity: 0;
   }
 }
 
